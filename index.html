@@ -1,687 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Capivox News | Trusted US News, Politics, Economy & Tech</title>
-  <meta name="description" content="Capivox News delivers fast, accurate, and multi-format US news coverage across Politics, Economy, Tech, Health, Science, and Official Government Alerts." />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,700;0,900;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8f9fa; color: #111827; }
-    .font-serif-news { font-family: 'Merriweather', serif; }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-    .animate-ticker { display: flex; width: max-content; animation: ticker 28s linear infinite; }
-    .animate-ticker:hover { animation-play-state: paused; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Capivox News - Admin Panel</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; }
+        .container { max-width: 700px; margin: auto; background: #fff; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #1a202c; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #333; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 14px; }
+        textarea { height: 150px; resize: vertical; }
+        button { width: 100%; padding: 12px; background-color: #0056b3; color: white; border: none; border-radius: 5px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        button:hover { background-color: #004494; }
+        .status { margin-top: 15px; padding: 10px; border-radius: 5px; display: none; text-align: center; font-weight: bold; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        #admin-section { display: none; }
+    </style>
 </head>
-<body class="antialiased selection:bg-red-700 selection:text-white">
+<body>
 
-  <!-- Top Utility Bar -->
-  <div class="bg-neutral-950 text-neutral-300 text-xs border-b border-neutral-800">
-    <div class="max-w-7xl mx-auto px-4 py-1.5 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <span id="live-date" class="font-medium text-neutral-200"></span>
-        <span class="hidden sm:inline text-neutral-600">|</span>
-        <span class="hidden sm:inline text-emerald-400 font-semibold flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> US EDITION LIVE
-        </span>
-      </div>
-      <div class="flex items-center gap-4">
-        <button onclick="openQuickBriefs()" class="hover:text-white font-semibold transition">⚡ 60-Sec Briefs</button>
-        <a href="admin.html" class="text-neutral-400 hover:text-white transition">Desk Login</a>
-      </div>
-    </div>
-  </div>
+<div class="container">
+    <h2>Capivox News - Admin Studio</h2>
 
-  <!-- Main Masthead -->
-  <header class="bg-white border-b border-neutral-200 sticky top-0 z-40 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
-      <a href="#" onclick="filterCategory('All'); return false;" class="flex items-center gap-2.5 group">
-        <div class="bg-red-700 text-white font-black text-xl sm:text-2xl tracking-tighter px-2.5 py-1 rounded-sm shadow-sm group-hover:bg-red-800 transition">
-          CAPIVOX
+    <!-- Login Section -->
+    <div id="login-section">
+        <div class="form-group">
+            <label>Admin Password:</label>
+            <input type="password" id="admin-pass" placeholder="Enter Admin Password">
         </div>
-        <span class="font-extrabold text-lg sm:text-xl tracking-tight text-neutral-900">NEWS</span>
-      </a>
-
-      <!-- Search Bar -->
-      <div class="flex-1 max-w-md hidden md:block">
-        <div class="relative">
-          <input id="search-input" type="text" oninput="handleSearch(this.value)" placeholder="Search US politics, economy, NASA, CDC..." class="w-full bg-neutral-100 border border-neutral-200 rounded-full pl-4 pr-10 py-1.5 text-sm focus:outline-none focus:bg-white focus:border-red-700 transition" />
-          <svg class="w-4 h-4 text-neutral-500 absolute right-3.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        </div>
-      </div>
-
-      <button onclick="toggleMobileSearch()" class="md:hidden p-2 text-neutral-700 hover:bg-neutral-100 rounded-full" aria-label="Search">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-      </button>
+        <button onclick="checkLogin()">Login to Panel</button>
     </div>
 
-    <!-- Mobile Search Drawer -->
-    <div id="mobile-search-bar" class="hidden md:hidden px-4 pb-3 bg-white border-t border-neutral-100">
-      <input type="text" oninput="handleSearch(this.value)" placeholder="Search headlines & topics..." class="w-full bg-neutral-100 border border-neutral-200 rounded-lg px-3.5 py-2 text-sm focus:outline-none focus:border-red-700" />
+    <!-- Main Admin Form -->
+    <div id="admin-section">
+        <div class="form-group">
+            <label>GitHub Username:</label>
+            <input type="text" id="gh-user" placeholder="e.g., jitendrapathak">
+        </div>
+        <div class="form-group">
+            <label>Repository Name:</label>
+            <input type="text" id="gh-repo" value="capivox-news">
+        </div>
+        <div class="form-group">
+            <label>GitHub Personal Access Token (PAT):</label>
+            <input type="password" id="gh-token" placeholder="ghp_xxxxxxxxxxxx">
+        </div>
+        <hr>
+        <div class="form-group">
+            <label>News Headline (Title):</label>
+            <input type="text" id="news-title" placeholder="Breaking US News Headline...">
+        </div>
+        <div class="form-group">
+            <label>Category:</label>
+            <select id="news-category">
+                <option value="US Politics">US Politics</option>
+                <option value="Technology">Technology</option>
+                <option value="Economy & Markets">Economy & Markets</option>
+                <option value="World">World</option>
+                <option value="Health & Science">Health & Science</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Image URL (Thumbnail):</label>
+            <input type="text" id="news-image" placeholder="https://example.com/image.jpg">
+        </div>
+        <div class="form-group">
+            <label>Article Content:</label>
+            <textarea id="news-content" placeholder="Write full news article here..."></textarea>
+        </div>
+        <button onclick="publishNews()">Publish News to Website</button>
+        <div id="status-msg" class="status"></div>
     </div>
+</div>
 
-    <!-- BBC-Style Category Navigation -->
-    <nav class="bg-white border-t border-neutral-100">
-      <div id="category-tabs" class="max-w-7xl mx-auto px-4 flex items-center gap-1 overflow-x-auto no-scrollbar py-1 text-sm font-bold text-neutral-700">
-        <!-- Injected via JS -->
-      </div>
-    </nav>
-  </header>
+<script>
+    // यहाँ अपना पासवर्ड बदल सकते हैं
+    const SECRET_PASS = "capivox2026";
 
-  <!-- Breaking News Ticker -->
-  <div class="bg-red-700 text-white text-xs sm:text-sm overflow-hidden border-b border-red-800">
-    <div class="max-w-7xl mx-auto flex items-center">
-      <div class="bg-neutral-950 text-white font-extrabold px-3 py-2 uppercase tracking-wider shrink-0 z-10 flex items-center gap-1.5">
-        <span class="w-2 h-2 bg-red-500 rounded-full animate-ping"></span> Breaking
-      </div>
-      <div class="overflow-hidden py-2 flex-1">
-        <div id="breaking-ticker" class="animate-ticker gap-10 px-4 font-medium">
-          <!-- Injected via JS -->
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Main Content Container -->
-  <main class="max-w-7xl mx-auto px-4 py-6 space-y-10">
-
-    <!-- Section 1: BBC-Style Hero Grid -->
-    <section id="hero-section" class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <!-- Lead Story (7 cols) -->
-      <div id="lead-story" class="lg:col-span-7 bg-white rounded-lg overflow-hidden shadow-sm border border-neutral-200 hover:shadow-md transition cursor-pointer flex flex-col">
-      </div>
-      <!-- Secondary Top Stories (5 cols) -->
-      <div id="secondary-stories" class="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
-      </div>
-    </section>
-
-    <!-- Section 2: Multi-Format Visual Web Stories (Mobile-First Swipe) -->
-    <section class="bg-neutral-900 text-white rounded-xl p-5 sm:p-6 shadow-md">
-      <div class="flex items-center justify-between mb-4">
-        <div>
-          <span class="text-xs font-extrabold uppercase tracking-widest text-red-400">Visual Stories</span>
-          <h2 class="text-lg sm:text-xl font-extrabold tracking-tight">Tap-Through US Briefing</h2>
-        </div>
-        <span class="text-xs text-neutral-400">Swipe →</span>
-      </div>
-      <div id="web-stories-row" class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
-        <!-- Visual Story Cards -->
-      </div>
-    </section>
-
-    <!-- Section 3: 60-Second Quick Briefs & Official Gov Alerts -->
-    <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-      <div class="lg:col-span-8">
-        <div class="flex items-center justify-between border-b-2 border-neutral-900 pb-2 mb-4">
-          <h2 id="feed-heading" class="text-xl font-black uppercase tracking-tight">Latest Coverage</h2>
-          <span id="article-count" class="text-xs font-semibold text-neutral-500"></span>
-        </div>
-        <div id="news-feed-grid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Main Feed Cards -->
-        </div>
-      </div>
-
-      <!-- Sidebar: Quick Briefs + Gov Feed -->
-      <aside class="lg:col-span-4 space-y-6">
-        <div class="bg-white border border-neutral-200 rounded-lg p-5 shadow-sm">
-          <div class="flex items-center gap-2 border-b border-neutral-200 pb-3 mb-4">
-            <span class="bg-amber-100 text-amber-800 text-xs font-extrabold px-2 py-0.5 rounded">60-SEC READ</span>
-            <h3 class="font-extrabold text-base text-neutral-900">Quick Executive Briefs</h3>
-          </div>
-          <div id="quick-briefs-list" class="space-y-4 divide-y divide-neutral-100">
-            <!-- Quick Briefs -->
-          </div>
-        </div>
-
-        <div class="bg-blue-950 text-white rounded-lg p-5 shadow-sm">
-          <div class="flex items-center gap-2 mb-3">
-            <span class="w-2.5 h-2.5 rounded-full bg-sky-400"></span>
-            <h3 class="font-extrabold text-sm uppercase tracking-wider text-sky-300">Official US Gov & Agency Wire</h3>
-          </div>
-          <p class="text-xs text-blue-200 mb-4">Verified updates sourced directly from White House, NASA, CDC, and Federal Reserve releases.</p>
-          <div id="gov-wire-list" class="space-y-3 text-sm">
-            <!-- Gov Alerts -->
-          </div>
-        </div>
-      </aside>
-    </section>
-  </main>
-
-  <!-- Full Article Reader Modal (Multi-Format Storytelling) -->
-  <div id="article-modal" class="fixed inset-0 bg-black/75 z-50 hidden overflow-y-auto backdrop-blur-xs">
-    <div class="min-h-screen px-2 sm:px-4 py-6 flex justify-center items-start">
-      <article class="bg-white w-full max-w-3xl rounded-xl shadow-2xl overflow-hidden my-auto">
-        <div class="sticky top-0 bg-white/95 backdrop-blur border-b border-neutral-200 px-4 sm:px-6 py-3 flex items-center justify-between z-10">
-          <span id="modal-category" class="bg-red-700 text-white text-xs font-extrabold uppercase px-2.5 py-1 rounded-sm"></span>
-          <div class="flex items-center gap-2">
-            <button onclick="shareCurrentArticle()" class="text-xs font-bold bg-neutral-100 hover:bg-neutral-200 text-neutral-800 px-3 py-1.5 rounded-full transition">Share Story</button>
-            <button onclick="closeModal()" class="p-1.5 rounded-full hover:bg-neutral-100 text-neutral-700" aria-label="Close">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-          </div>
-        </div>
-        <div id="modal-body" class="p-5 sm:p-8 space-y-6">
-          <!-- Dynamic Multi-Format Article Content -->
-        </div>
-      </article>
-    </div>
-  </div>
-
-  <!-- Web Story Full-Screen Viewer -->
-  <div id="story-viewer" class="fixed inset-0 bg-neutral-950 z-50 hidden flex items-center justify-center p-4">
-    <div class="relative w-full max-w-sm h-[82vh] bg-neutral-900 rounded-2xl overflow-hidden shadow-2xl border border-neutral-800 flex flex-col justify-between">
-      <img id="story-img" src="" alt="" class="absolute inset-0 w-full h-full object-cover opacity-55" />
-      <div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/60"></div>
-      <div class="relative z-10 p-4 flex items-center justify-between">
-        <span id="story-badge" class="bg-red-700 text-white text-[11px] font-extrabold uppercase px-2.5 py-0.5 rounded"></span>
-        <button onclick="closeStoryViewer()" class="text-white bg-black/50 rounded-full p-1.5 hover:bg-black">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-        </button>
-      </div>
-      <div class="relative z-10 p-6 text-white space-y-3">
-        <h3 id="story-title" class="font-serif-news text-2xl font-bold leading-snug"></h3>
-        <p id="story-summary" class="text-sm text-neutral-200 leading-relaxed"></p>
-        <button id="story-read-btn" class="w-full mt-2 bg-white text-neutral-950 font-extrabold text-xs uppercase tracking-wider py-3 rounded-lg hover:bg-neutral-200 transition">
-          Read Full Report →
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Footer -->
-  <footer class="bg-neutral-950 text-neutral-400 mt-16 border-t border-neutral-800">
-    <div class="max-w-7xl mx-auto px-4 py-10 grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div>
-        <div class="flex items-center gap-2 mb-3">
-          <span class="bg-red-700 text-white font-black text-lg px-2 py-0.5 rounded-sm">CAPIVOX</span>
-          <span class="font-extrabold text-white text-lg">NEWS</span>
-        </div>
-        <p class="text-xs leading-relaxed text-neutral-400">Independent, fast, and verified multi-format journalism covering the United States, Federal Agencies, Markets, and Global Innovation.</p>
-      </div>
-      <div>
-        <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-3">Sections</h4>
-        <div class="grid grid-cols-2 gap-2 text-xs">
-          <button onclick="filterCategory('US Politics')" class="text-left hover:text-white">US Politics</button>
-          <button onclick="filterCategory('Economy')" class="text-left hover:text-white">Economy & Markets</button>
-          <button onclick="filterCategory('Tech')" class="text-left hover:text-white">Technology & AI</button>
-          <button onclick="filterCategory('Health')" class="text-left hover:text-white">Health & CDC</button>
-          <button onclick="filterCategory('Science')" class="text-left hover:text-white">Science & NASA</button>
-          <button onclick="filterCategory('Govt Alerts')" class="text-left hover:text-white">Official Gov Alerts</button>
-        </div>
-      </div>
-      <div>
-        <h4 class="text-white font-bold text-sm uppercase tracking-wider mb-3">Editorial Standards</h4>
-        <p class="text-xs text-neutral-400 leading-relaxed">All reports follow strict factual verification standards referencing primary public records and official agency releases.</p>
-      </div>
-    </div>
-    <div class="border-t border-neutral-900 text-center py-4 text-xs text-neutral-500">
-      © 2026 Capivox News. All Rights Reserved.
-    </div>
-  </footer>
-
-  <script>
-    const CATEGORIES = ['All', 'US Politics', 'Economy', 'Tech', 'Health', 'Science', 'Govt Alerts', 'World'];
-    let activeCategory = 'All';
-    let searchQuery = '';
-    let currentModalArticle = null;
-
-    // Starter High-Quality Multi-Format Stories (Replaced/Expanded automatically when you publish via admin.html)
-    const DEFAULT_ARTICLES = [
-      {
-        id: 'art-1',
-        title: 'Federal Reserve Signals Measured Rate Path as US Labor Market Shows Resilient Hiring',
-        subtitle: 'Central bank officials emphasize data-dependent policy ahead of next quarter inflation benchmarks.',
-        category: 'Economy',
-        format: 'In-Depth Report',
-        readTime: '4 min read',
-        publishedAt: '2 hours ago',
-        source: 'Federal Reserve / Capivox Desk',
-        image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=1200&q=80',
-        keyTakeaways: [
-          'Policymakers noted steady consumer spending alongside cooling core goods inflation.',
-          'Treasury yields stabilized following the release of updated employment projections.',
-          'Economists expect gradual adjustments rather than abrupt shifts in borrowing costs.'
-        ],
-        dataHighlight: { label: 'US Core Inflation Benchmark', value: '2.6% YoY', note: 'Down 0.4% from previous quarter' },
-        body: [
-          'WASHINGTON — Senior Federal Reserve officials indicated this week that monetary policy remains well-positioned to balance sustained job growth with long-term price stability.',
-          'In briefing documents reviewed by Capivox News, regional bank presidents highlighted resilient service-sector demand across major metropolitan hubs, even as manufacturing activity moderates.',
-          'Market analysts say businesses are increasingly focusing on productivity gains and artificial intelligence adoption to offset higher financing expenses.'
-        ],
-        timeline: [
-          { time: '08:30 AM EST', event: 'Labor Department releases monthly payroll and wage growth figures.' },
-          { time: '11:00 AM EST', event: 'Wall Street indices open higher led by financial and industrial stocks.' },
-          { time: '02:00 PM EST', event: 'Federal Reserve policy statement reaffirms 2% long-run inflation target.' }
-        ]
-      },
-      {
-        id: 'art-2',
-        title: 'NASA Unveils Next-Generation Lunar Communications Relay Architecture for Artemis Missions',
-        subtitle: 'New orbital satellites aim to deliver high-speed optical data links between the Moon and Earth.',
-        category: 'Science',
-        format: 'Visual Explainer',
-        readTime: '3 min read',
-        publishedAt: '3 hours ago',
-        source: 'NASA.gov Official Release',
-        image: 'https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&w=1200&q=80',
-        keyTakeaways: [
-          'Laser communications will transmit high-definition video from the lunar south pole in near real-time.',
-          'Commercial aerospace partners will build and operate the relay nodes under NASA oversight.',
-          'Initial orbital testing is scheduled ahead of upcoming crewed surface expeditions.'
-        ],
-        dataHighlight: { label: 'Data Transmission Boost', value: '100x Faster', note: 'Compared to legacy S-band radio links' },
-        body: [
-          'CAPE CANAVERAL — NASA has finalized the technical blueprint for LunaNet, an interconnected communications and navigation network designed to support sustained human presence on the Moon.',
-          'Unlike Apollo-era missions that relied on direct line-of-sight radio waves, the new architecture places relay satellites in specialized lunar orbits to eliminate communication blackouts.',
-          'Agency engineers confirmed the system will also provide GPS-style positioning for autonomous rovers exploring permanently shadowed craters.'
-        ]
-      },
-      {
-        id: 'art-3',
-        title: 'Bipartisan Senate Panel Advances Federal AI Safety & Watermarking Transparency Framework',
-        subtitle: 'Legislation proposes clear disclosure standards for synthetic media and high-impact automated systems.',
-        category: 'US Politics',
-        format: 'Policy Breakdown',
-        readTime: '5 min read',
-        publishedAt: '4 hours ago',
-        source: 'US Senate Commerce Committee',
-        image: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=1200&q=80',
-        keyTakeaways: [
-          'Developers of frontier models would be required to conduct pre-deployment safety evaluations.',
-          'Digital content provenance standards aim to help consumers identify AI-generated audio and video.',
-          'Small startups receive compliance exemptions to protect domestic innovation.'
-        ],
-        body: [
-          'CAPITOL HILL — A bipartisan coalition of US senators moved forward Thursday with targeted legislation aimed at establishing guardrails for generative artificial intelligence without slowing commercial research.',
-          'The bill directs the National Institute of Standards and Technology (NIST) to formalize testing benchmarks for cybersecurity, biosecurity, and election integrity.',
-          'Technology industry groups welcomed the clarity on federal standards, noting it reduces compliance friction across state lines.'
-        ]
-      },
-      {
-        id: 'art-4',
-        title: 'CDC Updates Seasonal Respiratory Virus Guidance with Expanded Rapid Home Testing Access',
-        subtitle: 'Public health officials outline streamlined prevention steps ahead of peak travel months.',
-        category: 'Health',
-        format: 'Quick Brief',
-        readTime: '2 min read',
-        publishedAt: '5 hours ago',
-        source: 'CDC.gov Health Advisory',
-        image: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=1200&q=80',
-        keyTakeaways: [
-          'Updated combination antigen tests detect multiple respiratory viruses from a single swab.',
-          'High-risk adults are encouraged to review immunization schedules with local pharmacists.',
-          'Hospital capacity nationwide remains stable heading into the seasonal transition.'
-        ],
-        body: [
-          'ATLANTA — The Centers for Disease Control and Prevention issued refreshed public health guidance emphasizing early detection and indoor air ventilation.',
-          'New over-the-counter multiplex test kits are rolling out to pharmacies nationwide, allowing families to distinguish between influenza and other viral infections within 15 minutes.'
-        ]
-      },
-      {
-        id: 'art-5',
-        title: 'US Semiconductor Manufacturing Investments Cross $400 Billion Milestone Across 25 States',
-        subtitle: 'New fabrication plants and supply chain facilities accelerate domestic chip production.',
-        category: 'Tech',
-        format: 'Data Report',
-        readTime: '4 min read',
-        publishedAt: '6 hours ago',
-        source: 'US Dept. of Commerce',
-        image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80',
-        keyTakeaways: [
-          'Over 50 new semiconductor ecosystem projects have broken ground across Arizona, Texas, Ohio, and New York.',
-          'Community colleges are partnering with chipmakers to train 100,000 specialized technicians.',
-          'Domestic packaging capacity is expanding alongside advanced logic fabrication.'
-        ],
-        dataHighlight: { label: 'Private & Federal Investment', value: '$400B+', note: 'Across 25 US States' },
-        body: [
-          'WASHINGTON — Private sector commitments paired with federal manufacturing incentives have pushed total US semiconductor investments past $400 billion, according to Commerce Department tracking data.',
-          'Supply chain analysts point out that building local wafer and packaging facilities significantly reduces vulnerability to global shipping disruptions.'
-        ]
-      },
-      {
-        id: 'art-6',
-        title: 'Department of Energy Announces Grid Modernization Grants to Strengthen Storm Resilience',
-        subtitle: 'Smart grid sensors and underground transmission lines targeted for extreme weather protection.',
-        category: 'Govt Alerts',
-        format: 'Official Alert',
-        readTime: '3 min read',
-        publishedAt: '7 hours ago',
-        source: 'Energy.gov Press Office',
-        image: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?auto=format&fit=crop&w=1200&q=80',
-        keyTakeaways: [
-          'Federal grants will co-fund automated fault-rerouting technology across 18 regional utilities.',
-          'Upgrades are projected to cut storm-related power outage durations by up to 45%.',
-          'Rural electric cooperatives receive dedicated priority funding.'
-        ],
-        body: [
-          'WASHINGTON — The US Department of Energy unveiled a new tranche of grid resilience funding designed to harden power infrastructure against severe storms and heatwaves.',
-          'The projects focus on deploying AI-assisted load balancing and high-capacity battery storage at critical substations.'
-        ]
-      }
-    ];
-
-    let articles = [];
-
-    async function initApp() {
-      // Set live US date
-      const now = new Date();
-      document.getElementById('live-date').textContent = now.toLocaleDateString('en-US', {
-        weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
-      });
-
-      // Try loading articles.json from GitHub repo if published via admin.html, else fallback to localStorage/defaults
-      try {
-        const res = await fetch('articles.json?t=' + Date.now());
-        if (res.ok) {
-          const remoteData = await res.json();
-          if (Array.isArray(remoteData) && remoteData.length > 0) {
-            articles = remoteData;
-          }
+    function checkLogin() {
+        const inputPass = document.getElementById('admin-pass').value;
+        if (inputPass === SECRET_PASS) {
+            document.getElementById('login-section').style.display = 'none';
+            document.getElementById('admin-section').style.display = 'block';
+            // सेव किए गए GitHub डिटेल्स लोड करें
+            if(localStorage.getItem('gh_user')) document.getElementById('gh-user').value = localStorage.getItem('gh_user');
+            if(localStorage.getItem('gh_token')) document.getElementById('gh-token').value = localStorage.getItem('gh_token');
+        } else {
+            alert("Wrong Password!");
         }
-      } catch (e) { /* Fallback below */ }
-
-      if (articles.length === 0) {
-        const saved = localStorage.getItem('capivox_articles');
-        articles = saved ? JSON.parse(saved) : DEFAULT_ARTICLES;
-      }
-
-      renderCategories();
-      renderBreakingTicker();
-      renderAllSections();
     }
 
-    function renderCategories() {
-      const nav = document.getElementById('category-tabs');
-      nav.innerHTML = CATEGORIES.map(cat => {
-        const isActive = activeCategory === cat;
-        return `<button onclick="filterCategory('${cat}')" class="px-3.5 py-2 whitespace-nowrap border-b-2 transition ${
-          isActive ? 'border-red-700 text-red-700 font-extrabold' : 'border-transparent hover:text-red-700'
-        }">${cat}</button>`;
-      }).join('');
+    async function publishNews() {
+        const user = document.getElementById('gh-user').value.trim();
+        const repo = document.getElementById('gh-repo').value.trim();
+        const token = document.getElementById('gh-token').value.trim();
+        const title = document.getElementById('news-title').value.trim();
+        const category = document.getElementById('news-category').value;
+        const image = document.getElementById('news-image').value.trim();
+        const content = document.getElementById('news-content').value.trim();
+        const statusDiv = document.getElementById('status-msg');
+
+        if (!user || !repo || !token || !title || !content) {
+            alert("Please fill all required fields!");
+            return;
+        }
+
+        // ब्राउज़र में यूज़रनेम और टोकन सेव करें ताकि बार-बार न डालना पड़े
+        localStorage.setItem('gh_user', user);
+        localStorage.setItem('gh_token', token);
+
+        statusDiv.style.display = 'block';
+        statusDiv.className = 'status';
+        statusDiv.innerText = "Publishing news...";
+
+        const filePath = 'news.json';
+        const apiUrl = `https://api.github.com/repos/${user}/${repo}/contents/${filePath}`;
+
+        try {
+            // 1. पहले पुरानी news.json फाइल चेक करें
+            let existingData = [];
+            let fileSha = null;
+
+            const getRes = await fetch(apiUrl, {
+                headers: { 'Authorization': `token ${token}` }
+            });
+
+            if (getRes.ok) {
+                const fileInfo = await getRes.json();
+                fileSha = fileInfo.sha;
+                const decodedContent = decodeURIComponent(escape(atob(fileInfo.content)));
+                existingData = JSON.parse(decodedContent);
+            }
+
+            // 2. नई खबर जोड़ें
+            const newPost = {
+                id: Date.now(),
+                title: title,
+                category: category,
+                image: image || "https://via.placeholder.com/600x400?text=Capivox+News",
+                content: content,
+                date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+            };
+
+            existingData.unshift(newPost); // सबसे नई खबर ऊपर रखें
+
+            // 3. GitHub पर वापस अपलोड करें
+            const updatedContent = btoa(unescape(encodeURIComponent(JSON.stringify(existingData, null, 2))));
+            const bodyData = {
+                message: `Added news: ${title}`,
+                content: updatedContent
+            };
+            if (fileSha) bodyData.sha = fileSha;
+
+            const putRes = await fetch(apiUrl, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `token ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(bodyData)
+            });
+
+            if (putRes.ok) {
+                statusDiv.className = 'status success';
+                statusDiv.innerText = "Success! News published to Capivox News.";
+                document.getElementById('news-title').value = '';
+                document.getElementById('news-image').value = '';
+                document.getElementById('news-content').value = '';
+            } else {
+                throw new Error("Failed to update GitHub file. Check Token or Repo name.");
+            }
+        } catch (err) {
+            statusDiv.className = 'status error';
+            statusDiv.innerText = "Error: " + err.message;
+        }
     }
+</script>
 
-    function renderBreakingTicker() {
-      const ticker = document.getElementById('breaking-ticker');
-      const items = articles.slice(0, 5).map(a =>
-        `<button onclick="openArticle('${a.id}')" class="hover:underline flex items-center gap-2">
-          <span class="text-red-200 font-bold">[${a.category}]</span> ${a.title}
-        </button>`
-      ).join('<span class="text-red-400">•</span>');
-      ticker.innerHTML = items + '<span class="text-red-400">•</span>' + items;
-    }
-
-    function filterCategory(cat) {
-      activeCategory = cat;
-      renderCategories();
-      renderAllSections();
-    }
-
-    function handleSearch(val) {
-      searchQuery = val.toLowerCase().trim();
-      renderAllSections();
-    }
-
-    function toggleMobileSearch() {
-      document.getElementById('mobile-search-bar').classList.toggle('hidden');
-    }
-
-    function getFilteredArticles() {
-      return articles.filter(a => {
-        const matchesCat = activeCategory === 'All' || a.category === activeCategory;
-        const matchesSearch = !searchQuery ||
-          a.title.toLowerCase().includes(searchQuery) ||
-          a.subtitle.toLowerCase().includes(searchQuery) ||
-          a.category.toLowerCase().includes(searchQuery);
-        return matchesCat && matchesSearch;
-      });
-    }
-
-    function renderAllSections() {
-      const filtered = getFilteredArticles();
-      const heroSec = document.getElementById('hero-section');
-
-      if (activeCategory === 'All' && !searchQuery && filtered.length >= 3) {
-        heroSec.classList.remove('hidden');
-        renderHero(filtered);
-      } else {
-        heroSec.classList.add('hidden');
-      }
-
-      renderWebStories();
-      renderMainFeed(filtered);
-      renderSidebar();
-    }
-
-    function renderHero(list) {
-      const lead = list[0];
-      const side = list.slice(1, 5);
-
-      document.getElementById('lead-story').onclick = () => openArticle(lead.id);
-      document.getElementById('lead-story').innerHTML = `
-        <div class="relative aspect-video bg-neutral-200 overflow-hidden">
-          <img src="${lead.image}" alt="${lead.title}" class="w-full h-full object-cover hover:scale-105 transition duration-500" loading="eager" />
-          <span class="absolute top-3 left-3 bg-red-700 text-white text-xs font-extrabold uppercase px-2.5 py-1 rounded-sm shadow">
-            ${lead.category}
-          </span>
-        </div>
-        <div class="p-5 sm:p-6 flex-1 flex flex-col justify-between">
-          <div>
-            <div class="flex items-center gap-2 text-xs font-bold text-red-700 uppercase tracking-wider mb-2">
-              <span>${lead.format || 'Lead Story'}</span>
-              <span class="text-neutral-300">•</span>
-              <span class="text-neutral-500 font-medium">${lead.readTime || '3 min read'}</span>
-            </div>
-            <h1 class="font-serif-news text-2xl sm:text-3xl font-black text-neutral-900 leading-tight mb-3 hover:text-red-700 transition">
-              ${lead.title}
-            </h1>
-            <p class="text-neutral-600 text-sm sm:text-base leading-relaxed mb-4">${lead.subtitle}</p>
-          </div>
-          <div class="flex items-center justify-between text-xs text-neutral-500 pt-3 border-t border-neutral-100">
-            <span class="font-semibold text-neutral-700">${lead.source || 'Capivox US Desk'}</span>
-            <span>${lead.publishedAt}</span>
-          </div>
-        </div>
-      `;
-
-      document.getElementById('secondary-stories').innerHTML = side.map(item => `
-        <div onclick="openArticle('${item.id}')" class="bg-white rounded-lg p-3.5 border border-neutral-200 shadow-sm hover:shadow-md transition cursor-pointer flex gap-3.5 items-start">
-          <img src="${item.image}" alt="${item.title}" class="w-24 h-24 sm:w-28 sm:h-24 rounded object-cover shrink-0 bg-neutral-100" loading="lazy" />
-          <div class="flex-1 min-w-0">
-            <span class="text-[11px] font-extrabold uppercase text-red-700 tracking-wide">${item.category}</span>
-            <h3 class="font-bold text-sm sm:text-base text-neutral-900 leading-snug line-clamp-2 mt-0.5 hover:text-red-700 transition">${item.title}</h3>
-            <div class="text-[11px] text-neutral-500 mt-2 flex items-center gap-2">
-              <span>${item.publishedAt}</span>
-              <span>•</span>
-              <span>${item.readTime || '3 min'}</span>
-            </div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function renderWebStories() {
-      const container = document.getElementById('web-stories-row');
-      container.innerHTML = articles.slice(0, 6).map(a => `
-        <div onclick="openStoryViewer('${a.id}')" class="relative w-40 sm:w-44 h-64 rounded-xl overflow-hidden shrink-0 cursor-pointer group border border-neutral-700">
-          <img src="${a.image}" alt="${a.title}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500 opacity-80" loading="lazy" />
-          <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
-          <span class="absolute top-2.5 left-2.5 bg-red-700 text-white text-[10px] font-extrabold uppercase px-2 py-0.5 rounded">${a.category}</span>
-          <div class="absolute bottom-3 left-3 right-3">
-            <p class="text-xs font-bold text-white leading-snug line-clamp-3">${a.title}</p>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function renderMainFeed(list) {
-      document.getElementById('feed-heading').textContent = activeCategory === 'All' ? 'Latest US Coverage' : `${activeCategory} News`;
-      document.getElementById('article-count').textContent = `${list.length} Stories`;
-      const grid = document.getElementById('news-feed-grid');
-
-      if (list.length === 0) {
-        grid.innerHTML = `<div class="col-span-full bg-white p-8 rounded-lg border border-neutral-200 text-center text-neutral-500">No stories matched your filter. Try selecting "All".</div>`;
-        return;
-      }
-
-      grid.innerHTML = list.map(a => `
-        <article onclick="openArticle('${a.id}')" class="bg-white rounded-lg overflow-hidden border border-neutral-200 shadow-sm hover:shadow-md transition cursor-pointer flex flex-col">
-          <div class="relative aspect-video bg-neutral-100 overflow-hidden">
-            <img src="${a.image}" alt="${a.title}" class="w-full h-full object-cover hover:scale-105 transition duration-500" loading="lazy" />
-            <span class="absolute bottom-2 left-2 bg-neutral-950/85 text-white text-[10px] font-bold uppercase px-2 py-0.5 rounded">${a.format || 'Report'}</span>
-          </div>
-          <div class="p-4 flex-1 flex flex-col justify-between">
-            <div>
-              <span class="text-xs font-extrabold uppercase text-red-700">${a.category}</span>
-              <h3 class="font-serif-news font-bold text-lg text-neutral-900 leading-snug mt-1 mb-2 hover:text-red-700 transition">${a.title}</h3>
-              <p class="text-xs text-neutral-600 line-clamp-2 leading-relaxed">${a.subtitle}</p>
-            </div>
-            <div class="flex items-center justify-between text-[11px] text-neutral-500 mt-4 pt-3 border-t border-neutral-100">
-              <span>${a.source || 'Capivox News'}</span>
-              <span>${a.publishedAt}</span>
-            </div>
-          </div>
-        </article>
-      `).join('');
-    }
-
-    function renderSidebar() {
-      document.getElementById('quick-briefs-list').innerHTML = articles.slice(0, 4).map((a, idx) => `
-        <div onclick="openArticle('${a.id}')" class="pt-3 first:pt-0 cursor-pointer group">
-          <div class="flex items-start gap-2.5">
-            <span class="font-black text-red-700 text-sm">0${idx + 1}</span>
-            <div>
-              <h4 class="font-bold text-sm text-neutral-900 group-hover:text-red-700 transition leading-snug">${a.title}</h4>
-              <span class="text-[11px] text-neutral-500">${a.category} • ${a.readTime || '2 min'}</span>
-            </div>
-          </div>
-        </div>
-      `).join('');
-
-      const govItems = articles.filter(a => a.category === 'Govt Alerts' || (a.source && a.source.includes('.gov'))).slice(0, 3);
-      const wireList = govItems.length > 0 ? govItems : articles.slice(0, 3);
-      document.getElementById('gov-wire-list').innerHTML = wireList.map(g => `
-        <div onclick="openArticle('${g.id}')" class="bg-blue-900/60 hover:bg-blue-900 p-3 rounded border border-blue-800 cursor-pointer transition">
-          <div class="text-[10px] font-bold uppercase text-sky-300 mb-1">${g.source || 'Official Release'}</div>
-          <div class="font-semibold text-xs text-white leading-snug">${g.title}</div>
-        </div>
-      `).join('');
-    }
-
-    function openArticle(id) {
-      const a = articles.find(item => item.id === id);
-      if (!a) return;
-      currentModalArticle = a;
-
-      document.getElementById('modal-category').textContent = `${a.category} • ${a.format || 'Report'}`;
-
-      const takeawaysHtml = (a.keyTakeaways && a.keyTakeaways.length) ? `
-        <div class="bg-neutral-50 border-l-4 border-red-700 p-4 rounded-r-lg">
-          <h4 class="text-xs font-extrabold uppercase tracking-wider text-neutral-900 mb-2">Key Takeaways</h4>
-          <ul class="space-y-1.5 text-sm text-neutral-700 list-disc pl-4">
-            ${a.keyTakeaways.map(t => `<li>${t}</li>`).join('')}
-          </ul>
-        </div>
-      ` : '';
-
-      const dataBoxHtml = a.dataHighlight ? `
-        <div class="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center justify-between">
-          <div>
-            <div class="text-xs font-bold uppercase text-red-800">${a.dataHighlight.label}</div>
-            <div class="text-xs text-neutral-600 mt-0.5">${a.dataHighlight.note || ''}</div>
-          </div>
-          <div class="text-2xl sm:text-3xl font-black text-red-700">${a.dataHighlight.value}</div>
-        </div>
-      ` : '';
-
-      const timelineHtml = (a.timeline && a.timeline.length) ? `
-        <div class="border border-neutral-200 rounded-lg p-4 space-y-3">
-          <h4 class="text-xs font-extrabold uppercase tracking-wider text-neutral-900">Developing Timeline</h4>
-          <div class="space-y-3 border-l-2 border-red-700 ml-2 pl-4">
-            ${a.timeline.map(t => `
-              <div>
-                <span class="text-[11px] font-extrabold text-red-700">${t.time}</span>
-                <p class="text-sm text-neutral-800">${t.event}</p>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      ` : '';
-
-      const paragraphs = Array.isArray(a.body) ? a.body : String(a.body).split('\n\n');
-
-      document.getElementById('modal-body').innerHTML = `
-        <header class="space-y-3">
-          <h1 class="font-serif-news text-2xl sm:text-4xl font-black text-neutral-950 leading-tight">${a.title}</h1>
-          <p class="text-base sm:text-lg text-neutral-600 leading-relaxed">${a.subtitle}</p>
-          <div class="flex flex-wrap items-center gap-3 text-xs text-neutral-500 pt-2 border-t border-neutral-100">
-            <span class="font-bold text-neutral-800">By ${a.source || 'Capivox News Desk'}</span>
-            <span>•</span>
-            <span>${a.publishedAt}</span>
-            <span>•</span>
-            <span>${a.readTime || '3 min read'}</span>
-          </div>
-        </header>
-
-        <img src="${a.image}" alt="${a.title}" class="w-full rounded-lg max-h-96 object-cover bg-neutral-100" />
-
-        ${takeawaysHtml}
-        ${dataBoxHtml}
-
-        <div class="space-y-4 text-neutral-800 text-base leading-relaxed">
-          ${paragraphs.map(p => `<p>${p}</p>`).join('')}
-        </div>
-
-        ${timelineHtml}
-      `;
-
-      document.getElementById('article-modal').classList.remove('hidden');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeModal() {
-      document.getElementById('article-modal').classList.add('hidden');
-      document.body.style.overflow = '';
-    }
-
-    function openStoryViewer(id) {
-      const a = articles.find(item => item.id === id);
-      if (!a) return;
-      document.getElementById('story-img').src = a.image;
-      document.getElementById('story-badge').textContent = a.category;
-      document.getElementById('story-title').textContent = a.title;
-      document.getElementById('story-summary').textContent = a.subtitle;
-      document.getElementById('story-read-btn').onclick = () => {
-        closeStoryViewer();
-        openArticle(a.id);
-      };
-      document.getElementById('story-viewer').classList.remove('hidden');
-    }
-
-    function closeStoryViewer() {
-      document.getElementById('story-viewer').classList.add('hidden');
-    }
-
-    function openQuickBriefs() {
-      document.getElementById('quick-briefs-list').scrollIntoView({ behavior: 'smooth' });
-    }
-
-    function shareCurrentArticle() {
-      if (!currentModalArticle) return;
-      if (navigator.share) {
-        navigator.share({ title: currentModalArticle.title, text: currentModalArticle.subtitle, url: window.location.href });
-      } else {
-        navigator.clipboard.writeText(window.location.href);
-        alert('Story link copied to clipboard!');
-      }
-    }
-
-    initApp();
-  </script>
 </body>
 </html>
